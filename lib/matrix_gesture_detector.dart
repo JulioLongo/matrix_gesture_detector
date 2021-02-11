@@ -22,6 +22,11 @@ class MatrixGestureDetector extends StatefulWidget {
   ///
   final MatrixGestureDetectorCallback onMatrixUpdate;
 
+  ///
+  /// Callback to notify the update ended.
+  ///
+  final Function onMatrixUpdateEnd;
+
   /// The [child] contained by this detector.
   ///
   /// {@macro flutter.widgets.child}
@@ -58,17 +63,18 @@ class MatrixGestureDetector extends StatefulWidget {
   /// aligned relative to the size of this widget.
   final Alignment focalPointAlignment;
 
-  const MatrixGestureDetector({
-    Key key,
-    @required this.initMatrix,
-    @required this.onMatrixUpdate,
-    @required this.child,
-    this.shouldTranslate = true,
-    this.shouldScale = true,
-    this.shouldRotate = true,
-    this.clipChild = true,
-    this.focalPointAlignment,
-  })  : assert(onMatrixUpdate != null),
+  const MatrixGestureDetector(
+      {Key key,
+      @required this.initMatrix,
+      @required this.onMatrixUpdate,
+      @required this.child,
+      this.shouldTranslate = true,
+      this.shouldScale = true,
+      this.shouldRotate = true,
+      this.clipChild = true,
+      this.focalPointAlignment,
+      this.onMatrixUpdateEnd})
+      : assert(onMatrixUpdate != null),
         assert(child != null),
         super(key: key);
 
@@ -118,6 +124,7 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
     return GestureDetector(
       onScaleStart: onScaleStart,
       onScaleUpdate: onScaleUpdate,
+      onScaleEnd: onScaleEnd,
       child: child,
     );
   }
@@ -142,6 +149,10 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
     translationUpdater.value = details.focalPoint;
     rotationUpdater.value = double.nan;
     scaleUpdater.value = 1.0;
+  }
+
+  void onScaleEnd(ScaleEndDetails details) {
+    if (widget.onMatrixUpdateEnd != null) widget.onMatrixUpdateEnd(details);
   }
 
   void onScaleUpdate(ScaleUpdateDetails details) {
