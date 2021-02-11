@@ -34,6 +34,8 @@ class MatrixGestureDetector extends StatefulWidget {
   ///
   final bool shouldTranslate;
 
+  final Matrix4 initMatrix;
+
   /// Whether to detect scale gestures during the event processing.
   ///
   /// Defaults to true.
@@ -58,6 +60,7 @@ class MatrixGestureDetector extends StatefulWidget {
 
   const MatrixGestureDetector({
     Key key,
+    @required this.initMatrix,
     @required this.onMatrixUpdate,
     @required this.child,
     this.shouldTranslate = true,
@@ -117,6 +120,12 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
       onScaleUpdate: onScaleUpdate,
       child: child,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    matrix = widget.initMatrix;
   }
 
   _ValueUpdater<Offset> translationUpdater = _ValueUpdater(
